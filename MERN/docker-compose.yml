@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  frontend:
+    build: "./mern/frontend"  # Use quotes and a leading dot/slash for paths
+    ports:
+      - "5173:5173"           # List items need to be indented under the key
+    networks:
+      - mern-network          # List items need to be indented
+    container_name: frontend
+
+  backend:
+    build: "./mern/backend"   # Corrected path name and formatting
+    container_name: backend
+    ports:
+      - "5050:5050"
+    networks:
+      - mern-network
+    depends_on:
+      - db                    # List items need to be indented
+    environment:
+      # CRITICAL: Backend needs the DB connection string to use the DB service name
+      MONGO_URI: "mongodb://db:27017/employees" 
+
+  db:
+    image: mongo:latest       # Corrected image name
+    container_name: mern-mongodb
+    networks:
+      - mern-network
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    
+# Top-level Networks section (must be outside of 'services')
+networks:
+  mern-network:
+    driver: bridge            # 'drivers' should be 'driver'
+
+# Top-level Volumes section (must be outside of 'services')
+volumes:
+  mongo-data:
+    driver: local             # 'drivers' should be 'driver'
